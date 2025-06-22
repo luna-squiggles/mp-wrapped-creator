@@ -99,16 +99,16 @@ export default function Navbar() {
                 <ChevronDown size={20} className={`transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} />
               </button>
               {isAboutOpen && (
-                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                <div className="absolute left-0 mt-2 w-48 bg-[#DB2650] rounded-md shadow-lg py-1 z-50">
                   <a
                     href="https://allhandsontech.uk/about"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="block px-4 py-2 text-sm font-ultrabold text-white hover:bg-[#DB2650]/80"
                   >
                     The Campaign
                   </a>
                   <a
                     href="https://allhandsontech.uk/our-team"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="block px-4 py-2 text-sm font-ultrabold text-white hover:bg-[#DB2650]/80"
                   >
                     Our Team
                   </a>
@@ -139,13 +139,13 @@ export default function Navbar() {
                 <div className="absolute left-0 mt-2 w-48 bg-[#DB2650] rounded-md shadow-lg py-1 z-50">
                   <a
                     href="https://kloud.allhandsontech.uk"
-                    className="block px-4 py-2 text-sm text-white hover:bg-[#DB2650]/80"
+                    className="block px-4 py-2 text-sm font-ultrabold text-white hover:bg-[#DB2650]/80"
                   >
                     Kloud
                   </a>
                   <a
                     href="/"
-                    className="block px-4 py-2 text-sm text-black hover:bg-[#DB2650]/80"
+                    className="block px-4 py-2 text-sm font-ultrabold text-black hover:bg-[#DB2650]/80"
                   >
                     Wrapped
                   </a>
