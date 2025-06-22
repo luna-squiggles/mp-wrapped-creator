@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'PPTelegraf';
+  src: url('/PPTelegraf-Regular-BF6417cecb5d571.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PPTelegraf';
+  src: url('/PPTelegraf-Ultrabold-BF6417cecc5b1d9.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* Set PPTelegraf as default font for entire site */
+html, body {
+  background-color: #060606;
+  font-family: 'PPTelegraf', sans-serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
