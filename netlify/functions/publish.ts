@@ -11,6 +11,7 @@ const mpSchema = z.object({
   parliamentContributions: z.number().int().nonnegative(),
   parliamentVotes: z.number().int().nonnegative(),
   communityVisits: z.object({
+    totalEngagements: z.number().int().nonnegative(),
     category1: z.object({ number: z.number(), label: z.string() }),
     category2: z.object({ number: z.number(), label: z.string() }),
     category3: z.object({ number: z.number(), label: z.string() })
