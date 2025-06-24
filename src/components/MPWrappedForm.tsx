@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { mpWrappedSchema, type MPWrapped } from '../types/mp-wrapped';
-import { AlertCircle, CheckCircle, Loader2, ArrowRight, ArrowLeft, User, BarChart3, Users, Target, Building, MessageSquare } from 'lucide-react';
+import { AlertCircle, CheckCircle, Loader2, ArrowRight, ArrowLeft, User, BarChart3, Users, Target, Building, MessageSquare, Music } from 'lucide-react';
 import slugify from 'slugify';
 
 const steps = [
@@ -10,6 +10,7 @@ const steps = [
   { id: 'community', title: 'Community', icon: Users },
   { id: 'priorities', title: 'Priorities', icon: Target },
   { id: 'project', title: 'Local Project', icon: Building },
+  { id: 'music', title: 'Music', icon: Music },
   { id: 'quote', title: 'Slogan', icon: MessageSquare },
 ];
 
@@ -18,6 +19,7 @@ export function MPWrappedForm() {
   const [formData, setFormData] = useState<MPWrapped>({
     mpName: '',
     constituency: '',
+    musicSelect: 1,
     surgeryHours: 0,
     casesClosed: 0,
     parliamentContributions: 0,
@@ -47,8 +49,12 @@ export function MPWrappedForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
 
   const updateField = (path: string, value: any) => {
+    // Trim whitespace from string values
+    const trimmedValue = typeof value === 'string' ? value.trim() : value;
+    
     setFormData(prev => {
       const newData = { ...prev };
       const keys = path.split('.');
@@ -57,7 +63,7 @@ export function MPWrappedForm() {
       for (let i = 0; i < keys.length - 1; i++) {
         current = current[keys[i]];
       }
-      current[keys[keys.length - 1]] = value;
+      current[keys[keys.length - 1]] = trimmedValue;
       
       return newData;
     });
@@ -76,9 +82,12 @@ export function MPWrappedForm() {
   };
 
   const updateArrayField = (field: 'contributionPriorities' | 'votePriorities', index: number, value: string) => {
+    // Trim whitespace from the value
+    const trimmedValue = value.trim();
+    
     setFormData(prev => ({
       ...prev,
-      [field]: prev[field].map((item, i) => i === index ? value : item)
+      [field]: prev[field].map((item, i) => i === index ? trimmedValue : item)
     }));
   };
 
@@ -90,7 +99,8 @@ export function MPWrappedForm() {
       3: () => formData.communityVisits.category1.label && formData.communityVisits.category2.label && formData.communityVisits.category3.label,
       4: () => formData.contributionPriorities.every(p => p.length > 0) && formData.votePriorities.every(p => p.length > 0),
       5: () => formData.localProject.name.length > 0 && formData.localProject.achievement.length > 0,
-      6: () => formData.quote.length > 0 && formData.quote.length <= 40,
+      6: () => formData.musicSelect >= 1 && formData.musicSelect <= 3,
+      7: () => formData.quote.length > 0 && formData.quote.length <= 40,
     };
 
     return stepValidations[currentStep as keyof typeof stepValidations]?.() || false;
@@ -201,7 +211,7 @@ export function MPWrappedForm() {
                 <p>
                   For any questions or technical issues, feel free to get in touch with Tom directly.
                 </p>
-                <p className="text-[#DA2650] font-medium pt-2">
+                <p className="text-[#DA2650] font-bold pt-2">
                   Team Kanishka Narayan MP :)
                 </p>
               </div>
@@ -381,7 +391,7 @@ export function MPWrappedForm() {
                   <p className="text-sm text-gray-400 mt-2">We suggested including written questions</p>
                 </div>
                 <div className="space-y-3">
-                  <h4 className="text-sm font-medium text-gray-300">Top 3 Contribution Priorities</h4>
+                  <h4 className="text-sm font-medium text-gray-300">Top 3 Priorities</h4>
                   {formData.contributionPriorities.map((priority, index) => (
                     <div key={index}>
                       <input
@@ -411,9 +421,12 @@ export function MPWrappedForm() {
                     className="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
                     placeholder="Enter number of votes"
                   />
+                  <p className="text-sm text-gray-400 mt-2">
+                    You can find this <a href="https://members.parliament.uk/members/commons" target="_blank" rel="noopener noreferrer" className="underline text-[#DA2650]">here</a>
+                  </p>
                 </div>
                 <div className="space-y-3">
-                  <h4 className="text-sm font-medium text-gray-300">Top 3 Vote Priorities</h4>
+                  <h4 className="text-sm font-medium text-gray-300">Top 3 Election Promises</h4>
                   {formData.votePriorities.map((priority, index) => (
                     <div key={index}>
                       <input
@@ -426,6 +439,9 @@ export function MPWrappedForm() {
                     </div>
                   ))}
                 </div>
+                <p className="text-sm text-gray-400 mb-2">
+                  We suggest looking <a href="https://fullfact.org/government-tracker/?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" className="underline text-[#DA2650]">here</a>
+                </p>
               </div>
             </div>
           </div>
@@ -466,6 +482,60 @@ export function MPWrappedForm() {
         );
 
       case 6:
+        return (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="text-center mb-8">
+              <Music className="w-16 h-16 text-[#DA2650] mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-white mb-2">Choose Your Music</h2>
+            </div>
+            <div className="max-w-2xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[1, 2, 3].map((songNumber) => (
+                  <div
+                    key={songNumber}
+                    className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                      formData.musicSelect === songNumber
+                        ? 'border-[#DA2650] bg-[#DA2650]/10'
+                        : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+                    }`}
+                    onClick={() => updateField('musicSelect', songNumber)}
+                  >
+                    <div className="text-center">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                        formData.musicSelect === songNumber
+                          ? 'bg-[#DA2650] text-white'
+                          : 'bg-gray-700 text-gray-400'
+                      }`}>
+                        <Music size={24} />
+                      </div>
+                      <h3 className="text-lg font-semibold text-white mb-2">Song {songNumber}</h3>
+                      <button
+                        type="button"
+                        className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Pause any currently playing audio
+                          if (currentAudio) {
+                            currentAudio.pause();
+                            currentAudio.currentTime = 0;
+                          }
+                          // Create and play new audio
+                          const audio = new Audio(`/${songNumber}.mp3`);
+                          setCurrentAudio(audio);
+                          audio.play();
+                        }}
+                      >
+                        Preview
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 7:
         return (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
@@ -582,7 +652,7 @@ export function MPWrappedForm() {
               className="flex items-center gap-2 px-8 py-3 bg-[#DA2650] text-white rounded-xl hover:bg-[#DA2650]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
             >
               {isSubmitting && <Loader2 size={20} className="animate-spin" />}
-              {isSubmitting ? 'Publishing...' : 'Publish MP Wrapped'}
+              {isSubmitting ? 'Creating...' : 'Create URL'}
             </button>
           ) : (
             <button

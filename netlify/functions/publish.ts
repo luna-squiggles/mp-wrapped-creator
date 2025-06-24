@@ -6,6 +6,7 @@ import { z } from "zod";
 const mpSchema = z.object({
   mpName: z.string().min(2),
   constituency: z.string(),
+  musicSelect: z.number().int().min(1).max(3),
   surgeryHours: z.number().int().nonnegative(),
   casesClosed: z.number().int().nonnegative(),
   parliamentContributions: z.number().int().nonnegative(),
