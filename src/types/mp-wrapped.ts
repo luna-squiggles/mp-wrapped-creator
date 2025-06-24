@@ -8,6 +8,7 @@ export const mpWrappedSchema = z.object({
   parliamentContributions: z.number().int().nonnegative("Parliament contributions must be 0 or positive"),
   parliamentVotes: z.number().int().nonnegative("Parliament votes must be 0 or positive"),
   communityVisits: z.object({
+    totalEngagements: z.number().int().nonnegative("Total engagements must be 0 or positive"),
     category1: z.object({
       number: z.number().int().nonnegative(),
       label: z.string().min(1, "Category 1 label is required")

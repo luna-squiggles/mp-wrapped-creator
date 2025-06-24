@@ -4,6 +4,7 @@ import { AlertCircle, CheckCircle, Loader2, ArrowRight, ArrowLeft, User, BarChar
 import slugify from 'slugify';
 
 const steps = [
+  { id: 'intro', title: 'Welcome', icon: MessageSquare },
   { id: 'basic', title: 'Basic Info', icon: User },
   { id: 'stats', title: 'Statistics', icon: BarChart3 },
   { id: 'community', title: 'Community', icon: Users },
@@ -22,6 +23,7 @@ export function MPWrappedForm() {
     parliamentContributions: 0,
     parliamentVotes: 0,
     communityVisits: {
+      totalEngagements: 0,
       category1: { number: 0, label: '' },
       category2: { number: 0, label: '' },
       category3: { number: 0, label: '' }
@@ -82,12 +84,13 @@ export function MPWrappedForm() {
 
   const validateCurrentStep = () => {
     const stepValidations = {
-      0: () => formData.mpName.length >= 2 && formData.constituency.length >= 1,
-      1: () => true, // Stats can be 0
-      2: () => formData.communityVisits.category1.label && formData.communityVisits.category2.label && formData.communityVisits.category3.label,
-      3: () => formData.contributionPriorities.every(p => p.length > 0) && formData.votePriorities.every(p => p.length > 0),
-      4: () => formData.localProject.name.length > 0 && formData.localProject.achievement.length > 0,
-      5: () => formData.quote.length > 0 && formData.quote.length <= 40,
+      0: () => true, // Welcome page always valid
+      1: () => formData.mpName.length >= 2 && formData.constituency.length >= 1,
+      2: () => true, // Stats can be 0
+      3: () => formData.communityVisits.category1.label && formData.communityVisits.category2.label && formData.communityVisits.category3.label,
+      4: () => formData.contributionPriorities.every(p => p.length > 0) && formData.votePriorities.every(p => p.length > 0),
+      5: () => formData.localProject.name.length > 0 && formData.localProject.achievement.length > 0,
+      6: () => formData.quote.length > 0 && formData.quote.length <= 40,
     };
 
     return stepValidations[currentStep as keyof typeof stepValidations]?.() || false;
@@ -165,6 +168,51 @@ export function MPWrappedForm() {
         return (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
+              <MessageSquare className="w-16 h-16 text-[#DA2650] mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-white mb-6">Thanks for using our Labour Spotify Wrapped tool!</h2>
+            </div>
+            <div className="max-w-3xl mx-auto bg-gray-900 p-8 rounded-xl">
+              <div className="space-y-4 text-gray-300 leading-relaxed">
+                <p>
+                  By entering your key local achievements using the prompts in the form below, you can generate an engaging Wrapped-style video that highlights your impact across the constituency in your first year.
+                </p>
+                <p>
+                  👉 See an example of what your video could look like{' '}
+                  <a 
+                    href="https://example.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[#DA2650] hover:text-[#DA2650]/80 underline transition-colors"
+                  >
+                    here
+                  </a>
+                  .
+                </p>
+                <p>
+                  If you'd like a video export to share on social media, just email{' '}
+                  <a 
+                    href="mailto:tom.blake@parliament.uk" 
+                    className="text-[#DA2650] hover:text-[#DA2650]/80 underline transition-colors"
+                  >
+                    tom.blake@parliament.uk
+                  </a>
+                  {' '}with the link to your Wrapped.
+                </p>
+                <p>
+                  For any questions or technical issues, feel free to get in touch with Tom directly.
+                </p>
+                <p className="text-[#DA2650] font-medium pt-2">
+                  Team Kanishka Narayan MP :)
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 1:
+        return (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="text-center mb-8">
               <User className="w-16 h-16 text-[#DA2650] mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-2">Let's start with the basics</h2>
             </div>
@@ -187,7 +235,7 @@ export function MPWrappedForm() {
                   value={formData.constituency}
                   onChange={(e) => updateField('constituency', e.target.value)}
                   className="w-full p-4 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
-                  placeholder="e.g. Vale of Glamorgan"
+                  placeholder="e.g. the Vale of Glamorgan"
                 />
                 {errors.constituency && <p className="text-[#DA2650] text-sm mt-1">{errors.constituency}</p>}
               </div>
@@ -195,13 +243,12 @@ export function MPWrappedForm() {
           </div>
         );
 
-      case 1:
+      case 2:
         return (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
               <BarChart3 className="w-16 h-16 text-[#DA2650] mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-2">Parliamentary Statistics</h2>
-              <p className="text-gray-400">Key performance metrics</p>
+              <h2 className="text-2xl font-bold text-white mb-2">Casework Statistics</h2>
             </div>
             <div className="space-y-6">
               <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
@@ -251,13 +298,26 @@ export function MPWrappedForm() {
           </div>
         );
 
-      case 2:
+      case 3:
         return (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
               <Users className="w-16 h-16 text-[#DA2650] mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-2">Community Engagement</h2>
-              <p className="text-gray-400">Track community visits by category</p>
+            </div>
+            <div className="mb-8">
+              <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Total Community Engagements</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.communityVisits.totalEngagements || ''}
+                  onChange={(e) => updateField('communityVisits.totalEngagements', parseInt(e.target.value) || 0)}
+                  className="w-full p-4 bg-gray-900 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
+                  placeholder="e.g. 150"
+                />
+                {errors['communityVisits.totalEngagements'] && <p className="text-[#DA2650] text-sm mt-1">{errors['communityVisits.totalEngagements']}</p>}
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {(['category1', 'category2', 'category3'] as const).map((category, index) => {
@@ -295,13 +355,12 @@ export function MPWrappedForm() {
           </div>
         );
 
-      case 3:
+      case 4:
         return (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
               <Target className="w-16 h-16 text-[#DA2650] mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-2">Parliamentary Priorities</h2>
-              <p className="text-gray-400">Key focus areas in parliament</p>
             </div>
             <div className="space-y-8">
               <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
@@ -319,6 +378,7 @@ export function MPWrappedForm() {
                     className="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
                     placeholder="Enter number of contributions"
                   />
+                  <p className="text-sm text-gray-400 mt-2">We suggested including written questions</p>
                 </div>
                 <div className="space-y-3">
                   <h4 className="text-sm font-medium text-gray-300">Top 3 Contribution Priorities</h4>
@@ -371,13 +431,12 @@ export function MPWrappedForm() {
           </div>
         );
 
-      case 4:
+      case 5:
         return (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
               <Building className="w-16 h-16 text-[#DA2650] mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-2">Local Impact</h2>
-              <p className="text-gray-400">Highlight a key local project</p>
             </div>
             <div className="bg-gray-800 p-8 rounded-xl border border-gray-700 space-y-6">
               <div>
@@ -406,13 +465,12 @@ export function MPWrappedForm() {
           </div>
         );
 
-      case 5:
+      case 6:
         return (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
               <MessageSquare className="w-16 h-16 text-[#DA2650] mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-2">Final Touch</h2>
-              <p className="text-gray-400">Add a memorable quote</p>
             </div>
             <div className="bg-gray-800 p-8 rounded-xl border border-gray-700">
               <label className="block text-sm font-medium text-gray-300 mb-2">Quote</label>
