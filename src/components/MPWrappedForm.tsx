@@ -10,7 +10,7 @@ const steps = [
   { id: 'community', title: 'Community', icon: Users },
   { id: 'priorities', title: 'Priorities', icon: Target },
   { id: 'project', title: 'Local Project', icon: Building },
-  { id: 'quote', title: 'Quote', icon: MessageSquare },
+  { id: 'quote', title: 'Slogan', icon: MessageSquare },
 ];
 
 export function MPWrappedForm() {
@@ -473,18 +473,18 @@ export function MPWrappedForm() {
               <h2 className="text-2xl font-bold text-white mb-2">Final Touch</h2>
             </div>
             <div className="bg-gray-800 p-8 rounded-xl border border-gray-700">
-              <label className="block text-sm font-medium text-gray-300 mb-2">Quote</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Campaign Slogan</label>
               <textarea
                 value={formData.quote}
                 onChange={(e) => updateField('quote', e.target.value)}
                 rows={2}
                 maxLength={40}
                 className="w-full p-4 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200 resize-none"
-                placeholder="e.g. Thank you for an amazing year!"
+                placeholder="e.g. Delivering for the Vale!"
               />
               <div className="flex justify-between items-center mt-2">
                 <p className="text-sm text-gray-400">{formData.quote.length}/40 characters</p>
-                {errors.quote && <p className="text-[#DA2650] text-sm">{errors.quote}</p>}
+                {errors.quote && <p className="text-[#DA2650] text-sm">{errors.quote.replace('Quote', 'Campaign Slogan')}</p>}
               </div>
             </div>
             
