@@ -52,19 +52,14 @@ export function MPWrappedForm() {
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
 
   const updateField = (path: string, value: any) => {
-    // Trim whitespace from string values
-    const trimmedValue = typeof value === 'string' ? value.trim() : value;
-    
     setFormData(prev => {
       const newData = { ...prev };
       const keys = path.split('.');
       let current: any = newData;
-      
       for (let i = 0; i < keys.length - 1; i++) {
         current = current[keys[i]];
       }
-      current[keys[keys.length - 1]] = trimmedValue;
-      
+      current[keys[keys.length - 1]] = value;
       return newData;
     });
   };
@@ -82,12 +77,9 @@ export function MPWrappedForm() {
   };
 
   const updateArrayField = (field: 'contributionPriorities' | 'votePriorities', index: number, value: string) => {
-    // Trim whitespace from the value
-    const trimmedValue = value.trim();
-    
     setFormData(prev => ({
       ...prev,
-      [field]: prev[field].map((item, i) => i === index ? trimmedValue : item)
+      [field]: prev[field].map((item, i) => i === index ? value : item)
     }));
   };
 
@@ -139,6 +131,21 @@ export function MPWrappedForm() {
       return;
     }
 
+    // Deep trim all string fields in formData
+    function deepTrim(obj: any): any {
+      if (typeof obj === 'string') return obj.trim();
+      if (Array.isArray(obj)) return obj.map(deepTrim);
+      if (typeof obj === 'object' && obj !== null) {
+        const trimmedObj: any = {};
+        for (const key in obj) {
+          trimmedObj[key] = deepTrim(obj[key]);
+        }
+        return trimmedObj;
+      }
+      return obj;
+    }
+    const trimmedFormData = deepTrim(formData);
+
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
@@ -148,7 +155,7 @@ export function MPWrappedForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(trimmedFormData),
       });
 
       if (!response.ok) {
@@ -156,7 +163,7 @@ export function MPWrappedForm() {
       }
 
       const result = await response.json();
-      const slug = slugify(formData.mpName, { lower: true, strict: true });
+      const slug = slugify(trimmedFormData.mpName, { lower: true, strict: true });
       setSubmitStatus('success');
       setSubmitMessage(`Successfully published! Redirecting to wrapped.lunam.dev/${slug}`);
       
