@@ -351,7 +351,13 @@ export function MPWrappedForm() {
                           onChange={(e) => updateField(`communityVisits.${category}.label`, e.target.value)}
                           className="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
                           placeholder={placeholders[index]}
+                          maxLength={25}
                         />
+                        {formData.communityVisits[category].label.length >= 20 && (
+                          <div className="flex justify-between items-center mt-1">
+                            <p className="text-xs text-gray-400">{formData.communityVisits[category].label.length}/25 characters</p>
+                          </div>
+                        )}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Number of Visits</label>
@@ -407,7 +413,13 @@ export function MPWrappedForm() {
                         onChange={(e) => updateArrayField('contributionPriorities', index, e.target.value)}
                         className="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
                         placeholder={`Contribution Priority ${index + 1}`}
+                        maxLength={40}
                       />
+                      {priority.length >= 30 && (
+                        <div className="flex justify-between items-center mt-1">
+                          <p className="text-xs text-gray-400">{priority.length}/40 characters</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -442,7 +454,13 @@ export function MPWrappedForm() {
                         onChange={(e) => updateArrayField('votePriorities', index, e.target.value)}
                         className="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
                         placeholder={`Vote Priority ${index + 1}`}
+                        maxLength={60}
                       />
+                      {priority.length >= 50 && (
+                        <div className="flex justify-between items-center mt-1">
+                          <p className="text-xs text-gray-400">{priority.length}/60 characters</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -470,7 +488,13 @@ export function MPWrappedForm() {
                   onChange={(e) => updateField('localProject.name', e.target.value)}
                   className="w-full p-4 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
                   placeholder="e.g. Youth Center Renovation"
+                  maxLength={30}
                 />
+                {formData.localProject.name.length >= 25 && (
+                  <div className="flex justify-between items-center mt-1">
+                    <p className="text-sm text-gray-400">{formData.localProject.name.length}/30 characters</p>
+                  </div>
+                )}
                 {errors['localProject.name'] && <p className="text-[#DA2650] text-sm mt-1">{errors['localProject.name']}</p>}
               </div>
               <div>
@@ -480,9 +504,13 @@ export function MPWrappedForm() {
                   onChange={(e) => updateField('localProject.achievement', e.target.value)}
                   rows={4}
                   className="w-full p-4 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200 resize-none"
-                  placeholder="Describe the achievement and its impact on the community..."
+                  placeholder="Describe the achievement and its impact on your constituency..."
+                  maxLength={150}
                 />
-                {errors['localProject.achievement'] && <p className="text-[#DA2650] text-sm mt-1">{errors['localProject.achievement']}</p>}
+                <div className="flex justify-between items-center mt-1">
+                  <p className="text-sm text-gray-400">{formData.localProject.achievement.length}/150 characters</p>
+                  {errors['localProject.achievement'] && <p className="text-[#DA2650] text-sm">{errors['localProject.achievement']}</p>}
+                </div>
               </div>
             </div>
           </div>
