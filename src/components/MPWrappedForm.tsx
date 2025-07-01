@@ -165,10 +165,10 @@ export function MPWrappedForm() {
       const result = await response.json();
       const slug = slugify(trimmedFormData.mpName, { lower: true, strict: true });
       setSubmitStatus('success');
-      setSubmitMessage(`Successfully published! Redirecting to wrapped.lunam.dev/${slug}`);
+      setSubmitMessage(`Successfully published! Redirecting to wrapped.allhandsontech.uk/${slug}`);
       
       setTimeout(() => {
-        window.location.assign(`https://wrapped.lunam.dev/${slug}`);
+        window.location.assign(`https://wrapped.allhandsontech.uk/${slug}`);
       }, 2000);
 
     } catch (error: any) {
@@ -596,7 +596,7 @@ export function MPWrappedForm() {
             {formData.mpName && (
               <div className="bg-[#DA2650]/10 border border-[#DA2650]/30 rounded-xl p-6">
                 <p className="text-sm text-[#DA2650] font-medium">
-                  Preview URL: wrapped.lunam.dev/{slugify(formData.mpName, { lower: true, strict: true })}
+                  Preview URL: wrapped.allhandsontech.uk/{slugify(formData.mpName, { lower: true, strict: true })}
                 </p>
               </div>
             )}
