@@ -48,46 +48,53 @@ export const handler: Handler = async (event) => {
     // Generate a slug from the MP name
     const slug = slugify(body.mpName, { lower: true, strict: true });
 
-    // Prepare the content for GitHub
-    const content = Buffer.from(JSON.stringify(body, null, 2)).toString("base64");
-    const path = `${slug}.json`;
-
     // Check if GITHUB_PAT is available
     if (!process.env.GITHUB_PAT) {
       throw new Error("GitHub Personal Access Token not configured");
     }
 
-    // Try to get existing file SHA for updates
-    let sha: string | undefined;
-    try {
-      const existingFile = await fetch(
-        `https://api.github.com/repos/luna-squiggles/wrapped-data/contents/${path}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.GITHUB_PAT}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      
-      if (existingFile.ok) {
-        const fileData = await existingFile.json();
-        sha = fileData.sha;
+    // List all files in the repo root to find existing wraps for this slug
+    const listRes = await fetch(
+      `https://api.github.com/repos/luna-squiggles/wrapped-data/contents`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GITHUB_PAT}`,
+          "Content-Type": "application/json",
+        },
       }
-    } catch (error) {
-      // File doesn't exist, which is fine for new files
-      console.log("File doesn't exist yet, creating new file");
+    );
+    if (!listRes.ok) {
+      throw new Error("Failed to list repo contents");
     }
+    const files = await listRes.json();
+    // Find all files matching the pattern slug.json, slug-1.json, slug-2.json, etc.
+    const basePattern = new RegExp(`^${slug}(?:-(\\d+))?\\.json$`);
+    let maxIndex = -1;
+    files.forEach((file: any) => {
+      const match = file.name.match(basePattern);
+      if (match) {
+        if (match[1]) {
+          const idx = parseInt(match[1], 10);
+          if (idx > maxIndex) maxIndex = idx;
+        } else {
+          // The base file (no number) counts as index 0
+          if (maxIndex < 0) maxIndex = 0;
+        }
+      }
+    });
+    // Next available index
+    const nextIndex = maxIndex + 1;
+    const filename = nextIndex === 0 ? `${slug}.json` : `${slug}-${nextIndex}.json`;
+    const path = filename;
 
-    // Create or update the file via GitHub REST API
+    // Prepare the content for GitHub
+    const content = Buffer.from(JSON.stringify(body, null, 2)).toString("base64");
+
+    // Create the file via GitHub REST API (never update, always add new)
     const requestBody: any = {
-      message: `${sha ? 'Update' : 'Add'} wrap for ${body.mpName}`,
+      message: `Add wrap for ${body.mpName}`,
       content: content
     };
-
-    if (sha) {
-      requestBody.sha = sha;
-    }
 
     const response = await fetch(
       `https://api.github.com/repos/luna-squiggles/wrapped-data/contents/${path}`,
@@ -113,7 +120,7 @@ export const handler: Handler = async (event) => {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ url: `/${slug}` })
+      body: JSON.stringify({ url: `/${filename.replace(/\.json$/, "")}` })
     };
 
   } catch (error: any) {
