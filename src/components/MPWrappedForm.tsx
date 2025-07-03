@@ -346,7 +346,6 @@ export function MPWrappedForm() {
                     <h3 className="text-lg font-semibold text-white mb-4">Category {index + 1}</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Label</label>
                         <input
                           type="text"
                           value={formData.communityVisits[category].label}
@@ -354,22 +353,6 @@ export function MPWrappedForm() {
                           className="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
                           placeholder={placeholders[index]}
                           maxLength={25}
-                        />
-                        {formData.communityVisits[category].label.length >= 20 && (
-                          <div className="flex justify-between items-center mt-1">
-                            <p className="text-xs text-gray-400">{formData.communityVisits[category].label.length}/25 characters</p>
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Number of Visits</label>
-                        <input
-                          type="number"
-                          min="0"
-                          value={formData.communityVisits[category].number || ''}
-                          onChange={(e) => updateField(`communityVisits.${category}.number`, parseInt(e.target.value) || 0)}
-                          className="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-[#DA2650] focus:border-transparent transition-all duration-200"
-                          placeholder="Enter number of visits"
                         />
                       </div>
                     </div>
