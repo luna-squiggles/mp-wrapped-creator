@@ -522,6 +522,7 @@ export function MPWrappedForm() {
             <div className="text-center mb-8">
               <Music className="w-16 h-16 text-[#DA2650] mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-2">Choose Your Music</h2>
+              <p className="text-sm text-gray-400 mt-2">We have licensed this music on your behalf.</p>
             </div>
             <div className="max-w-2xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
