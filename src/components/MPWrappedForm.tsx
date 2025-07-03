@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { mpWrappedSchema, type MPWrapped } from '../types/mp-wrapped';
 import { AlertCircle, CheckCircle, Loader2, ArrowRight, ArrowLeft, User, BarChart3, Users, Target, Building, MessageSquare, Music } from 'lucide-react';
 import slugify from 'slugify';
+import AudioWaveformPreview from './AudioWaveformPreview';
 
 const steps = [
   { id: 'intro', title: 'Welcome', icon: MessageSquare },
@@ -49,7 +50,7 @@ export function MPWrappedForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
-  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
+  const [activeSong, setActiveSong] = useState<number | null>(null);
 
   const updateField = (path: string, value: any) => {
     setFormData(prev => {
@@ -91,7 +92,7 @@ export function MPWrappedForm() {
       3: () => formData.communityVisits.category1.label && formData.communityVisits.category2.label && formData.communityVisits.category3.label,
       4: () => formData.contributionPriorities.every(p => p.length > 0) && formData.votePriorities.every(p => p.length > 0),
       5: () => formData.localProject.name.length > 0 && formData.localProject.achievement.length > 0,
-      6: () => formData.musicSelect >= 1 && formData.musicSelect <= 3,
+      6: () => formData.musicSelect >= 1 && formData.musicSelect <= 4,
       7: () => formData.quote.length > 0 && formData.quote.length <= 40,
     };
 
@@ -525,8 +526,8 @@ export function MPWrappedForm() {
               <p className="text-sm text-gray-400 mt-2">We have licensed this music on your behalf.</p>
             </div>
             <div className="max-w-2xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[1, 2, 3].map((songNumber) => (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map((songNumber) => (
                   <div
                     key={songNumber}
                     className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
@@ -545,24 +546,11 @@ export function MPWrappedForm() {
                         <Music size={24} />
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">Song {songNumber}</h3>
-                      <button
-                        type="button"
-                        className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Pause any currently playing audio
-                          if (currentAudio) {
-                            currentAudio.pause();
-                            currentAudio.currentTime = 0;
-                          }
-                          // Create and play new audio
-                          const audio = new Audio(`/${songNumber}.mp3`);
-                          setCurrentAudio(audio);
-                          audio.play();
-                        }}
-                      >
-                        Preview
-                      </button>
+                      <AudioWaveformPreview
+                        src={`/${songNumber}.mp3`}
+                        isActive={activeSong === songNumber}
+                        onPlay={() => setActiveSong(songNumber)}
+                      />
                     </div>
                   </div>
                 ))}
