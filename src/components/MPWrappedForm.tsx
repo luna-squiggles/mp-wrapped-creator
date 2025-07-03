@@ -3,6 +3,7 @@ import { mpWrappedSchema, type MPWrapped } from '../types/mp-wrapped';
 import { AlertCircle, CheckCircle, Loader2, ArrowRight, ArrowLeft, User, BarChart3, Users, Target, Building, MessageSquare, Music } from 'lucide-react';
 import slugify from 'slugify';
 import AudioWaveformPreview from './AudioWaveformPreview';
+import WaveSurfer from 'wavesurfer.js';
 
 const steps = [
   { id: 'intro', title: 'Welcome', icon: MessageSquare },
@@ -50,8 +51,8 @@ export function MPWrappedForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
-  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
   const [activeSong, setActiveSong] = useState<number | null>(null);
+  const [playingWave, setPlayingWave] = useState<WaveSurfer | null>(null);
 
   const updateField = (path: string, value: any) => {
     setFormData(prev => {
@@ -93,7 +94,7 @@ export function MPWrappedForm() {
       3: () => formData.communityVisits.category1.label && formData.communityVisits.category2.label && formData.communityVisits.category3.label,
       4: () => formData.contributionPriorities.every(p => p.length > 0) && formData.votePriorities.every(p => p.length > 0),
       5: () => formData.localProject.name.length > 0 && formData.localProject.achievement.length > 0,
-      6: () => formData.musicSelect >= 1 && formData.musicSelect <= 4,
+      6: () => formData.musicSelect >= 1 && formData.musicSelect <= 8,
       7: () => formData.quote.length > 0 && formData.quote.length <= 40,
     };
 
@@ -117,15 +118,25 @@ export function MPWrappedForm() {
   };
 
   const nextStep = () => {
-    if (validateCurrentStep() && currentStep < steps.length - 1) {
+    if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
     }
+    if (playingWave) {
+      playingWave.pause();
+      playingWave.seekTo(0);
+    }
+    setActiveSong(null);
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
+    if (playingWave) {
+      playingWave.pause();
+      playingWave.seekTo(0);
+    }
+    setActiveSong(null);
   };
 
   const handleSubmit = async () => {
@@ -510,8 +521,8 @@ export function MPWrappedForm() {
               <p className="text-sm text-gray-400 mt-2">We have licensed this music on your behalf.</p>
             </div>
             <div className="max-w-2xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {[1, 2, 3, 4].map((songNumber) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                {[1,2,3,4,5,6,7,8].map((songNumber) => (
                   <div
                     key={songNumber}
                     className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
@@ -519,16 +530,7 @@ export function MPWrappedForm() {
                         ? 'border-[#DA2650] bg-[#DA2650]/10'
                         : 'border-gray-700 bg-gray-800 hover:border-gray-600'
                     }`}
-                    onClick={() => {
-                      if (currentAudio) {
-                        currentAudio.pause();
-                        currentAudio.currentTime = 0;
-                      }
-                      const audio = new Audio(`/${songNumber}.mp3`);
-                      setCurrentAudio(audio);
-                      setActiveSong(songNumber);
-                      audio.play();
-                    }}
+                    onClick={() => updateField('musicSelect', songNumber)}
                   >
                     <div className="text-center">
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${
@@ -542,34 +544,16 @@ export function MPWrappedForm() {
                       <AudioWaveformPreview
                         src={`/${songNumber}.mp3`}
                         isActive={activeSong === songNumber}
-                        onPlay={() => {
-                          if (currentAudio) {
-                            currentAudio.pause();
-                            currentAudio.currentTime = 0;
+                        onPlay={(wave) => {
+                          if (playingWave && playingWave !== wave) {
+                            playingWave.pause();
+                            playingWave.seekTo(0);
                           }
-                          const audio = new Audio(`/${songNumber}.mp3`);
-                          setCurrentAudio(audio);
+                          setPlayingWave(wave);
                           setActiveSong(songNumber);
-                          audio.play();
+                          wave.play();
                         }}
                       />
-                      <button
-                        type="button"
-                        className="mt-4 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (currentAudio) {
-                            currentAudio.pause();
-                            currentAudio.currentTime = 0;
-                          }
-                          const audio = new Audio(`/${songNumber}.mp3`);
-                          setCurrentAudio(audio);
-                          setActiveSong(songNumber);
-                          audio.play();
-                        }}
-                      >
-                        Preview
-                      </button>
                     </div>
                   </div>
                 ))}
