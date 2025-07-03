@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import WaveSurfer from 'wavesurfer.js';
+import { Play, Pause } from 'lucide-react';
 
 interface AudioWaveformPreviewProps {
   src: string;               // Audio file source
   isActive: boolean;         // Whether this waveform is the currently active one
-  onPlay: () => void;        // Callback when playback starts (to allow parent to pause others)
+  onPlay: (wave: WaveSurfer) => void; // Callback when playback starts (gives instance to parent)
 }
 
 /**
@@ -32,6 +33,11 @@ export default function AudioWaveformPreview({ src, isActive, onPlay }: AudioWav
 
     waveRef.current.load(src);
 
+    // Notify parent once ready so they can store ref if needed
+    waveRef.current.on('ready', () => {
+      // no-op, just ensures load finished
+    });
+
     // Clean-up on unmount
     return () => {
       waveRef.current?.destroy();
@@ -53,16 +59,25 @@ export default function AudioWaveformPreview({ src, isActive, onPlay }: AudioWav
     if (waveRef.current.isPlaying()) {
       waveRef.current.pause();
     } else {
-      onPlay(); // Notify parent to deactivate others
+      onPlay(waveRef.current); // Notify parent and provide instance
       waveRef.current.play();
     }
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="cursor-pointer select-none"
-      onClick={handleTogglePlay}
-    />
+    <div className="space-y-2">
+      <button
+        type="button"
+        onClick={handleTogglePlay}
+        className="mx-auto flex items-center justify-center w-8 h-8 rounded-full bg-gray-700 text-white hover:bg-gray-600"
+      >
+        {waveRef.current && waveRef.current.isPlaying() ? <Pause size={16}/> : <Play size={16}/>}
+      </button>
+      <div
+        ref={containerRef}
+        className="cursor-pointer select-none"
+        onClick={handleTogglePlay}
+      />
+    </div>
   );
 } 
