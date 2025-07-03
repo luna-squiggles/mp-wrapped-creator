@@ -50,6 +50,7 @@ export function MPWrappedForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
   const [activeSong, setActiveSong] = useState<number | null>(null);
 
   const updateField = (path: string, value: any) => {
@@ -535,7 +536,16 @@ export function MPWrappedForm() {
                         ? 'border-[#DA2650] bg-[#DA2650]/10'
                         : 'border-gray-700 bg-gray-800 hover:border-gray-600'
                     }`}
-                    onClick={() => updateField('musicSelect', songNumber)}
+                    onClick={() => {
+                      if (currentAudio) {
+                        currentAudio.pause();
+                        currentAudio.currentTime = 0;
+                      }
+                      const audio = new Audio(`/${songNumber}.mp3`);
+                      setCurrentAudio(audio);
+                      setActiveSong(songNumber);
+                      audio.play();
+                    }}
                   >
                     <div className="text-center">
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${
@@ -549,8 +559,34 @@ export function MPWrappedForm() {
                       <AudioWaveformPreview
                         src={`/${songNumber}.mp3`}
                         isActive={activeSong === songNumber}
-                        onPlay={() => setActiveSong(songNumber)}
+                        onPlay={() => {
+                          if (currentAudio) {
+                            currentAudio.pause();
+                            currentAudio.currentTime = 0;
+                          }
+                          const audio = new Audio(`/${songNumber}.mp3`);
+                          setCurrentAudio(audio);
+                          setActiveSong(songNumber);
+                          audio.play();
+                        }}
                       />
+                      <button
+                        type="button"
+                        className="mt-4 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (currentAudio) {
+                            currentAudio.pause();
+                            currentAudio.currentTime = 0;
+                          }
+                          const audio = new Audio(`/${songNumber}.mp3`);
+                          setCurrentAudio(audio);
+                          setActiveSong(songNumber);
+                          audio.play();
+                        }}
+                      >
+                        Preview
+                      </button>
                     </div>
                   </div>
                 ))}
