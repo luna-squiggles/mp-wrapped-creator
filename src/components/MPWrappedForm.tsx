@@ -196,10 +196,10 @@ export function MPWrappedForm() {
                 <p>
                   👉 See an example of what your video could look like{' '}
                   <a 
-                    href="https://example.com" 
+                    href="https://wrapped.allhandsontech.uk/kanishka-narayan" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-[#DA2650] hover:text-[#DA2650]/80 underline transition-colors"
+                    className="text-[#DA2650] hover:text-[#DA2650]/80 underline transition-colours"
                   >
                     here
                   </a>
