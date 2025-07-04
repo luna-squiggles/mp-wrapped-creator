@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { mpWrappedSchema, type MPWrapped } from '../types/mp-wrapped';
 import { AlertCircle, CheckCircle, Loader2, ArrowRight, ArrowLeft, User, BarChart3, Users, Target, Building, MessageSquare, Music } from 'lucide-react';
 import slugify from 'slugify';
@@ -53,6 +53,23 @@ export function MPWrappedForm() {
   const [submitMessage, setSubmitMessage] = useState('');
   const [activeSong, setActiveSong] = useState<number | null>(null);
   const [playingWave, setPlayingWave] = useState<WaveSurfer | null>(null);
+  const [progress, setProgress] = useState(0);
+
+  // Progress bar logic – count up to 100% over 10 seconds while submitting
+  useEffect(() => {
+    if (isSubmitting) {
+      setProgress(0);
+      const start = Date.now();
+      const timer = setInterval(() => {
+        const elapsed = Date.now() - start;
+        const pct = Math.min(100, (elapsed / 10000) * 100);
+        setProgress(pct);
+      }, 100);
+      return () => clearInterval(timer);
+    } else {
+      setProgress(0);
+    }
+  }, [isSubmitting]);
 
   const updateField = (path: string, value: any) => {
     setFormData(prev => {
@@ -658,6 +675,16 @@ export function MPWrappedForm() {
           }`}>
             {submitStatus === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
             <span>{submitMessage}</span>
+          </div>
+        )}
+
+        {/* Progress Bar while submitting */}
+        {isSubmitting && (
+          <div className="w-full bg-gray-700 rounded-full h-2 mb-8 overflow-hidden">
+            <div
+              className="bg-[#DA2650] h-2"
+              style={{ width: `${progress}%`, transition: 'width 0.1s linear' }}
+            />
           </div>
         )}
 
