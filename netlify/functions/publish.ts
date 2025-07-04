@@ -56,13 +56,13 @@ export const handler: Handler = async (event) => {
     // List all files in the repo root to find existing wraps for this slug
     const listRes = await fetch(
       `https://api.github.com/repos/luna-squiggles/wrapped-data/contents`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.GITHUB_PAT}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.GITHUB_PAT}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
     if (!listRes.ok) {
       throw new Error("Failed to list repo contents");
     }

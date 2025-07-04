@@ -601,14 +601,6 @@ export function MPWrappedForm() {
                 {errors.quote && <p className="text-[#DA2650] text-sm">{errors.quote.replace('Quote', 'Campaign Slogan')}</p>}
               </div>
             </div>
-            
-            {formData.mpName && (
-              <div className="bg-[#DA2650]/10 border border-[#DA2650]/30 rounded-xl p-6">
-                <p className="text-sm text-[#DA2650] font-medium">
-                  Preview URL: wrapped.allhandsontech.uk/{slugify(formData.mpName, { lower: true, strict: true })}
-                </p>
-              </div>
-            )}
           </div>
         );
 
@@ -686,6 +678,18 @@ export function MPWrappedForm() {
               style={{ width: `${progress}%`, transition: 'width 0.1s linear' }}
             />
           </div>
+        )}
+
+        {/* Notes before Create URL – only on final step */}
+        {currentStep === steps.length - 1 && (
+          <>
+            <p className="text-sm text-gray-400 mb-4 max-w-xl">
+              If you'd like a video export to share on social media, just email <a href="mailto:tom.blake@parliament.uk" className="underline text-[#DA2650]">tom.blake@parliament.uk</a> with the link to your Wrapped.
+            </p>
+            <p className="text-sm text-gray-400 mb-6 max-w-xl">
+              Please note: it may take around 10&nbsp;seconds for the URL to load after clicking the button.
+            </p>
+          </>
         )}
 
         {/* Navigation */}
