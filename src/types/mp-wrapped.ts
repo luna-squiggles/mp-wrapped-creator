@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const mpWrappedSchema = z.object({
   mpName: z.string().min(2, "MP name must be at least 2 characters"),
   constituency: z.string().min(1, "Constituency is required"),
-  musicSelect: z.number().int().min(1, "Please select a song").max(3, "Please select a valid song"),
+  musicSelect: z.number().int().min(1, "Please select a song").max(8, "Please select a valid song"),
   surgeryHours: z.number().int().nonnegative("Surgery hours must be 0 or positive"),
   casesClosed: z.number().int().nonnegative("Cases closed must be 0 or positive"),
   parliamentContributions: z.number().int().nonnegative("Parliament contributions must be 0 or positive"),
