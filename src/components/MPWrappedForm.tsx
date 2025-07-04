@@ -680,16 +680,26 @@ export function MPWrappedForm() {
           </div>
         )}
 
-        {/* Notes before Create URL – only on final step */}
+        {/* Important information box – only on final step */}
         {currentStep === steps.length - 1 && (
-          <>
-            <p className="text-sm text-gray-400 mb-4 max-w-xl">
-              If you'd like a video export to share on social media, just email <a href="mailto:tom.blake@parliament.uk" className="underline text-[#DA2650]">tom.blake@parliament.uk</a> with the link to your Wrapped.
-            </p>
-            <p className="text-sm text-gray-400 mb-6 max-w-xl">
-              Please note: it may take around 10&nbsp;seconds for the URL to load after clicking the button.
-            </p>
-          </>
+          <div className="bg-blue-900/20 border border-blue-700 rounded-xl p-6 mb-8">
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-white text-sm font-bold">i</span>
+              </div>
+              <div className="space-y-3">
+                <p className="text-blue-200 font-medium">
+                  📧 <strong>Want a video export?</strong> Email <a href="mailto:tom.blake@parliament.uk" className="underline text-blue-300 hover:text-blue-200">tom.blake@parliament.uk</a> with your Wrapped link for social media sharing.
+                </p>
+                <p className="text-blue-200">
+                  ⏱️ <strong>Loading time:</strong> Please allow around 10 seconds for your URL to load after clicking the button below.
+                </p>
+                <p className="text-blue-200">
+                  🔗 <strong>Unique URLs:</strong> Each time you create a Wrapped, a new unique URL will be generated.
+                </p>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Navigation */}
